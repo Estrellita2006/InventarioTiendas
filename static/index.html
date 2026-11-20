@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta & Inventario</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-main: #fff9db;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --sidebar-bg: #fff9db;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL (SIDEBAR) MODERNA */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            border-right: 2px solid #d4b85c;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .sidebar-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu .btn {
+            text-align: left;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+/* ENCABEZADO SUPERIOR */
+        .navbar-custom {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+        /* TARJETAS */
+        .card-custom {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--card-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-custom:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title-custom {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* FORMULARIOS */
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        /* BOTONES */
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 10px;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            color: white;
+        }
+
+        /* INDICADOR DE ESTADO */
+        .badge-status {
+            background-color: #dcfce7;
+            color: #166534;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* TABLAS */
+        .table-custom th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-custom td {
+            padding: 12px;
+            vertical-align: middle;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* MODALES */
+        .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        /* RESPONSIVE PARA DISPOSITIVOS MÓVILES */
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            body {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA LATERAL (SIDEBAR) MODERNA -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+             <span>STAR</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <span class="text-muted small fw-bold px-2 mb-1">NAVEGACIÓN</span>
+            <a href="/app/movimientos.html" class="btn btn-light text-dark shadow-sm">  Movimiento</a>
+            <a href="/app/reportes.html" class="btn btn-light text-dark shadow-sm"> Reportes e Historial</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="mb-3">
+            
+            </div>
+            <button class="btn btn-outline-danger w-100 fw-semibold" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-content">
+
+        <!-- ENCABEZADO SUPERIOR -->
+        <div class="navbar-custom">
+            <div>
+                <h4 class="m-0 fw-bold text-dark fs-5">Panel de Administración General</h4>
+                
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small d-none d-md-inline">Sesión Activa</span>
+            </div>
+        </div>
+
+        <div class="container-fluid py-4 px-4">
+            <div class="row g-4">
+                
+                <!-- COLUMNA IZQUIERDA: FORMULARIOS DE REGISTRO (col-lg-4) -->
+                <div class="col-lg-4">
+                    
+                    <!-- Formulario Agregar Producto -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="card-title-custom text-dark">
+                             Agregar Producto
+                        </div>
+                        <div id="alertProducto"></div>
+                        <form id="formProducto">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre del Producto</label>
+                                <input type="text" id="prodNombre" class="form-control" placeholder="Ej. Coca Cola 600ml" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Código de Barras</label>
+                                <input type="text" id="prodCodigo" class="form-control" placeholder="Ej. 7501234567890">
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label">Categoría</label>
+                                    <select id="selectCategoria" class="form-select" required>
+                                        <option value="">Cargando...</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Proveedor</label>
+                                    <select id="selectProveedor" class="form-select" required>
+                                        <option value="">Cargando...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label">Precio ($)</label>
+                                    <input type="number" step="0.01" id="prodPrecio" class="form-control" placeholder="18.50" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Stock Inicial</label>
+                                    <input type="number" id="prodStock" class="form-control" placeholder="50" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom w-100">Guardar Producto</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulario Agregar Proveedor -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="card-title-custom text-dark">
+                             Agregar Proveedor
+                        </div>
+                        <div id="alertProveedor"></div>
+                        <form id="formProveedor">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre Empresa</label>
+                                <input type="text" id="provEmpresa" class="form-control" placeholder="Ej. Comercializadora MX" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label">Contacto</label>
+                                    <input type="text" id="provContacto" class="form-control" placeholder="Juan Pérez">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="text" id="provTelefono" class="form-control" placeholder="555-1234">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Correo Electrónico (Email)</label>
+                                <input type="email" id="provEmail" class="form-control" placeholder="contacto@empresa.com">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" id="provDireccion" class="form-control" placeholder="Av. Central 123">
+                            </div>
+                            <button type="submit" class="btn btn-light border w-100 fw-semibold">Guardar Proveedor</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulario Registrar Usuario -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="card-title-custom text-dark">
+                             Registrar Usuario
+                        </div>
+                        <div id="alertUsuario"></div>
+                        <form id="formUsuario">
+                            <div class="mb-2">
+                                <label class="form-label">Nombre Completo</label>
+                                <input type="text" id="usrNombre" class="form-control" placeholder="Ej. Ana Torres" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Correo Electrónico</label>
+                                <input type="email" id="usrEmail" class="form-control" placeholder="ana@ejemplo.com" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" id="usrPassword" class="form-control" placeholder="••••••••" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Rol de Usuario</label>
+                                <select id="usrRol" class="form-select">
+                                    <option value="usuario">Vendedor</option>
+                                    <option value="editor">Almacenista</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100 fw-semibold">Registrar Usuario</button>
+                        </form>
+                    </div>
+
+                    <!-- Formulario Agregar Categoría -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="card-title-custom text-dark"> Agregar Categoría</div>
+                        <div id="alertCategoria"></div>
+                        <form id="formCategoria">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre de la Categoría</label>
+                                <input type="text" id="catNombre" class="form-control" placeholder="Ej. Bebidas" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descripción</label>
+                                <input type="text" id="catDescripcion" class="form-control" placeholder="Ej. Bebidas frías">
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">Guardar Categoría</button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- COLUMNA DERECHA: TABLAS DE DATOS (col-lg-8) -->
+                <div class="col-lg-8">
+                    
+                    <!-- TABLA DE INVENTARIO -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="card-title-custom text-dark m-0">
+                                📋 Inventario de Productos
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="cargarInventario()">🔄 Actualizar</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Categoría</th>
+                                        <th>Precio</th>
+                                        <th>Stock</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaInventario">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">Cargando datos...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABLA DE PROVEEDORES -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="card-title-custom text-dark m-0">
+                                🏭 Directorio de Proveedores
+                            </div>
+                            <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="cargarProveedores()">🔄 Actualizar</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>EMPRESA</th>
+                                        <th>CONTACTO</th>
+                                        <th>TELÉFONO</th>
+                                        <th>EMAIL</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaProveedores">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">Cargando proveedores...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABLA DE USUARIOS DEL SISTEMA -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="card-title-custom text-dark m-0">
+                                👥 Usuarios Registrados
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="cargarUsuarios()">🔄 Actualizar</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Correo Electrónico</th>
+                                        <th>Rol</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaUsuarios">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">Cargando usuarios...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- TABLA DE CATEGORÍAS -->
+                    <div class="card card-custom p-4 mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="card-title-custom text-dark m-0">🏷️ Categorías Registradas</div>
+                            <button class="btn btn-outline-warning btn-sm rounded-pill px-3" onclick="cargarTablaCategorias()">🔄 Actualizar</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaCategorias">
+                                    <tr><td colspan="4" class="text-center text-muted py-4">Cargando categorías...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PRODUCTO -->
+    <div class="modal fade" id="modalEditProducto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">✏️ Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditProducto">
+                        <input type="hidden" id="editProdId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del Producto</label>
+                            <input type="text" id="editProdNombre" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Código de Barras</label>
+                            <input type="text" id="editProdCodigo" class="form-control">
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Categoría</label>
+                                <select id="editSelectCategoria" class="form-select" required></select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Proveedor</label>
+                                <select id="editSelectProveedor" class="form-select" required></select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Precio ($)</label>
+                                <input type="number" step="0.01" id="editProdPrecio" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Stock</label>
+                                <input type="number" id="editProdStock" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100">Actualizar Producto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PROVEEDOR -->
+    <div class="modal fade" id="modalEditProveedor" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">✏️ Editar Proveedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditProveedor">
+                        <input type="hidden" id="editProvId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Empresa</label>
+                            <input type="text" id="editProvEmpresa" class="form-control" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Contacto</label>
+                                <input type="text" id="editProvContacto" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" id="editProvTelefono" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" id="editProvEmail" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" id="editProvDireccion" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-light border w-100 fw-semibold">Actualizar Proveedor</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR USUARIO -->
+    <div class="modal fade" id="modalEditUsuario" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">✏️ Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditUsuario">
+                        <input type="hidden" id="editUsrId">
+                        <div class="mb-2">
+                            <label class="form-label">Nombre Completo</label>
+                            <input type="text" id="editUsrNombre" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" id="editUsrEmail" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Nueva Contraseña (Opcional)</label>
+                            <input type="password" id="editUsrPassword" class="form-control" placeholder="Dejar en blanco si no cambia">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rol de Usuario</label>
+                            <select id="editUsrRol" class="form-select">
+                                <option value="usuario">Vendedor</option>
+                                <option value="editor">Almacenista</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-outline-danger w-100 fw-semibold">Actualizar Usuario</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR CATEGORÍA -->
+    <div class="modal fade" id="modalEditCategoria" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">✏️ Editar Categoría</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditCategoria">
+                        <input type="hidden" id="editCatId">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" id="editCatNombre" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <input type="text" id="editCatDescripcion" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-semibold text-dark">Actualizar Categoría</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SCRIPT JS PRINCIPAL -->
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        const usuarioSesion = JSON.parse(localStorage.getItem('usuario') || '{}');
+        const rol = (usuarioSesion.rol || '').toString().trim().toLowerCase();
+
+        // Si NO es admin, lo sacamos a su módulo
+        if (!usuarioSesion || !usuarioSesion.rol) {
+            window.location.href = '/app/login.html';
+        } else if (rol === 'usuario' || rol === 'vendedor') {
+            window.location.href = '/app/vendedor.html';
+        } else if (rol === 'editor' || rol === 'almacenista' || rol.includes('almacen')) {
+            window.location.href = '/app/almacen.html';
+        } else if (rol !== 'admin' && rol !== 'administrador') {
+            window.location.href = '/app/login.html';
+        }
+
+        let cacheProductos = [];
+        let cacheProveedores = [];
+        let cacheUsuarios = [];
+        let cacheCategorias = [];
+
+        let modalProd, modalProv, modalUsr, modalCat;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const elemModalProd = document.getElementById('modalEditProducto');
+            const elemModalProv = document.getElementById('modalEditProveedor');
+            const elemModalUsr = document.getElementById('modalEditUsuario');
+            const elemModalCat = document.getElementById('modalEditCategoria');
+
+            if (elemModalProd) modalProd = new bootstrap.Modal(elemModalProd);
+            if (elemModalProv) modalProv = new bootstrap.Modal(elemModalProv);
+            if (elemModalUsr) modalUsr = new bootstrap.Modal(elemModalUsr);
+            if (elemModalCat) modalCat = new bootstrap.Modal(elemModalCat);
+
+            cargarInventario();
+            cargarOptionsCategorias();
+            cargarOptionsProveedores();
+            cargarProveedores();
+            cargarUsuarios();
+            cargarTablaCategorias();
+        });
+
+        async function cargarInventario() {
+            const tbody = document.getElementById('tablaInventario');
+            if (!tbody) return;
+            try {
+                const res = await fetch(`${API_URL}/inventario`);
+                const data = await res.json();
+                cacheProductos = Array.isArray(data) ? data : (data.productos || []);
+                tbody.innerHTML = '';
+
+                if (cacheProductos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No hay productos en el inventario.</td></tr>';
+                    return;
+                }
+
+                cacheProductos.forEach(prod => {
+                    const id = prod.id_producto || prod.id || prod.id_prod || '-';
+                    const codigo = prod.codigo_barras || prod.codigo || 'S/C';
+                    const nombre = prod.nombre_producto || prod.nombre || prod.producto || 'Sin nombre';
+                    const categoria = prod.nombre_categoria || prod.categoria || (prod.id_categoria ? `Categoría ${prod.id_categoria}` : 'Sin categoría');
+                    let valPrecio = prod.precio_venta ?? prod.precio ?? prod.precio_float ?? 0;
+                    const precioFormatted = parseFloat(valPrecio).toFixed(2);
+                    let valStock = prod.stock_actual ?? prod.stock ?? prod.existencias ?? 0;
+                    const stock = parseInt(valStock);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${id}</td>
+                            <td><code class="text-dark bg-light px-2 py-1 rounded border">${codigo}</code></td>
+                            <td class="fw-semibold text-dark">${nombre}</td>
+                            <td><span class="badge bg-light text-dark border">${categoria}</span></td>
+                            <td class="fw-bold text-success">$${precioFormatted}</td>
+                            <td>
+                                <span class="badge ${stock > 10 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} px-2 py-1">
+                                    ${stock} uds
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="abrirEditarProducto(${id})">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarProducto(${id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error cargando inventario:", err);
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-4">Error al conectar con la API.</td></tr>';
+            }
+        }
+
+        async function cargarOptionsCategorias() {
+            const select = document.getElementById('selectCategoria');
+            const editSelect = document.getElementById('editSelectCategoria');
+            try {
+                const res = await fetch(`${API_URL}/categorias`);
+                const categorias = await res.json();
+                const htmlOpts = '<option value="">Seleccione Categoría</option>';
+                const lista = Array.isArray(categorias) ? categorias : (categorias.categorias || []);
+                
+                let options = htmlOpts;
+                if (lista.length > 0) {
+                    lista.forEach(c => {
+                        const id = c.id_categoria || c.id;
+                        const nombre = c.nombre || c.nombre_categoria || `Categoría ${id}`;
+                        options += `<option value="${id}">${nombre}</option>`;
+                    });
+                } else {
+                    options = '<option value="1">Categoría General</option>';
+                }
+                if (select) select.innerHTML = options;
+                if (editSelect) editSelect.innerHTML = options;
+            } catch (err) {
+                if (select) select.innerHTML = '<option value="1">Categoría General</option>';
+                if (editSelect) editSelect.innerHTML = '<option value="1">Categoría General</option>';
+            }
+        }
+
+        async function cargarOptionsProveedores() {
+            const select = document.getElementById('selectProveedor');
+            const editSelect = document.getElementById('editSelectProveedor');
+            try {
+                const res = await fetch(`${API_URL}/proveedores`);
+                const proveedores = await res.json();
+                const lista = Array.isArray(proveedores) ? proveedores : (proveedores.proveedores || []);
+                
+                let options = '<option value="">Seleccione Proveedor</option>';
+                if (lista.length > 0) {
+                    lista.forEach(p => {
+                        const id = p.id_proveedor || p.id;
+                        const nombre = p.nombre_empresa || p.nombre || `Proveedor ${id}`;
+                        options += `<option value="${id}">${nombre}</option>`;
+                    });
+                } else {
+                    options = '<option value="1">Proveedor Principal</option>';
+                }
+                if (select) select.innerHTML = options;
+                if (editSelect) editSelect.innerHTML = options;
+            } catch (err) {
+                if (select) select.innerHTML = '<option value="1">Proveedor Principal</option>';
+                if (editSelect) editSelect.innerHTML = '<option value="1">Proveedor Principal</option>';
+            }
+        }
+
+        async function cargarProveedores() {
+            const tbody = document.getElementById('tablaProveedores');
+            if (!tbody) return;
+            try {
+                const res = await fetch(`${API_URL}/proveedores`);
+                const data = await res.json();
+                cacheProveedores = Array.isArray(data) ? data : (data.proveedores || []);
+                tbody.innerHTML = '';
+
+                if (cacheProveedores.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No hay proveedores registrados.</td></tr>';
+                    return;
+                }
+
+                cacheProveedores.forEach(prov => {
+                    const id = prov.id_proveedor || prov.id || '-';
+                    const empresa = prov.nombre_empresa || prov.nombre || 'N/A';
+                    const contacto = prov.contacto_nombre || prov.contacto || 'Sin contacto';
+                    const telefono = prov.telefono || 'N/A';
+                    const email = prov.email || 'N/A';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${id}</td>
+                            <td class="fw-semibold text-dark">${empresa}</td>
+                            <td>${contacto}</td>
+                            <td>${telefono}</td>
+                            <td><span class="text-primary">${email}</span></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-secondary me-1" onclick="abrirEditarProveedor(${id})">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarProveedor(${id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error al cargar proveedores:", err);
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-4">Error al conectar con Proveedores.</td></tr>';
+            }
+        }
+
+        async function cargarUsuarios() {
+            const tbody = document.getElementById('tablaUsuarios');
+            if (!tbody) return;
+            try {
+                const res = await fetch(`${API_URL}/usuarios`);
+                const data = await res.json();
+                cacheUsuarios = Array.isArray(data) ? data : (data.usuarios || []);
+                tbody.innerHTML = '';
+
+                if (cacheUsuarios.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No hay usuarios registrados.</td></tr>';
+                    return;
+                }
+
+                cacheUsuarios.forEach(usr => {
+                    const id = usr.id_usuario || usr.id || '-';
+                    const nombre = usr.nombre || usr.nombre_completo || 'N/A';
+                    const email = usr.email || usr.correo || 'N/A';
+                    const rol = (usr.rol || 'usuario').toLowerCase();
+
+                    let badgeRol = 'bg-info text-dark';
+                    let textRol = 'VENDEDOR';
+                    if (rol === 'admin' || rol === 'administrador') { badgeRol = 'bg-danger'; textRol = 'ADMINISTRADOR'; }
+                    if (rol === 'editor' || rol === 'almacenista') { badgeRol = 'bg-warning text-dark'; textRol = 'ALMACENISTA'; }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${id}</td>
+                            <td class="fw-semibold text-dark">${nombre}</td>
+                            <td>${email}</td>
+                            <td><span class="badge ${badgeRol}">${textRol}</span></td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="abrirEditarUsuario(${id})">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario(${id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error al cargar usuarios:", err);
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Error al conectar con Usuarios.</td></tr>';
+            }
+        }
+
+        async function cargarTablaCategorias() {
+            const tbody = document.getElementById('tablaCategorias');
+            if (!tbody) return;
+            try {
+                const res = await fetch(`${API_URL}/categorias`);
+                const data = await res.json();
+                cacheCategorias = Array.isArray(data) ? data : [];
+                tbody.innerHTML = '';
+
+                if (cacheCategorias.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No hay categorías registradas.</td></tr>';
+                    return;
+                }
+
+                cacheCategorias.forEach(cat => {
+                    const id = cat.id_categoria || cat.id;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${id}</td>
+                            <td class="fw-semibold text-dark">${cat.nombre}</td>
+                            <td>${cat.descripcion || 'Sin descripción'}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-warning me-1" onclick="abrirEditarCategoria(${id})">✏️</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria(${id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4">Error al cargar categorías.</td></tr>';
+            }
+        }
+
+        function abrirEditarProducto(id) {
+            const prod = cacheProductos.find(p => (p.id_producto || p.id || p.id_prod) == id);
+            if (!prod) return;
+            document.getElementById('editProdId').value = id;
+            document.getElementById('editProdNombre').value = prod.nombre_producto || prod.nombre || '';
+            if (document.getElementById('editProdCodigo')) {
+                document.getElementById('editProdCodigo').value = prod.codigo_barras || prod.codigo || '';
+            }
+            document.getElementById('editSelectCategoria').value = prod.id_categoria || 1;
+            document.getElementById('editSelectProveedor').value = prod.id_proveedor || 1;
+            document.getElementById('editProdPrecio').value = prod.precio_venta ?? prod.precio ?? 0;
+            document.getElementById('editProdStock').value = prod.stock_actual ?? prod.stock ?? prod.existencias ?? 0;
+            if (modalProd) modalProd.show();
+        }
+
+        document.getElementById('formEditProducto')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editProdId').value;
+            const producto = {
+                nombre_producto: document.getElementById('editProdNombre').value.trim(),
+                codigo_barras: document.getElementById('editProdCodigo')?.value.trim() || null,
+                id_categoria: parseInt(document.getElementById('editSelectCategoria').value) || 1,
+                id_proveedor: parseInt(document.getElementById('editSelectProveedor').value) || 1,
+                precio: parseFloat(document.getElementById('editProdPrecio').value) || 0.0,
+                stock: parseInt(document.getElementById('editProdStock').value) || 0
+            };
+
+            const res = await fetch(`${API_URL}/productos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(producto)
+            });
+            if (res.ok) {
+                if (modalProd) modalProd.hide();
+                cargarInventario();
+            } else {
+                alert("No se pudo actualizar el producto");
+            }
+        });
+
+        async function eliminarProducto(id) {
+            if (!confirm(`¿Estás seguro de eliminar el producto #${id}?`)) return;
+            const res = await fetch(`${API_URL}/productos/${id}`, { method: 'DELETE' });
+            if (res.ok) cargarInventario();
+            else alert("Error al eliminar producto");
+        }
+
+        function abrirEditarProveedor(id) {
+            const prov = cacheProveedores.find(p => (p.id_proveedor || p.id) == id);
+            if (!prov) return;
+            document.getElementById('editProvId').value = id;
+            document.getElementById('editProvEmpresa').value = prov.nombre_empresa || prov.nombre || '';
+            document.getElementById('editProvContacto').value = prov.contacto_nombre || prov.contacto || '';
+            document.getElementById('editProvTelefono').value = prov.telefono || '';
+            document.getElementById('editProvEmail').value = prov.email || '';
+            document.getElementById('editProvDireccion').value = prov.direccion || '';
+            if (modalProv) modalProv.show();
+        }
+
+        document.getElementById('formEditProveedor')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editProvId').value;
+            const proveedor = {
+                nombre_empresa: document.getElementById('editProvEmpresa').value.trim(),
+                contacto_nombre: document.getElementById('editProvContacto').value.trim() || null,
+                telefono: document.getElementById('editProvTelefono').value.trim() || null,
+                email: document.getElementById('editProvEmail').value.trim() || null,
+                direccion: document.getElementById('editProvDireccion').value.trim() || null
+            };
+
+            const res = await fetch(`${API_URL}/proveedores/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(proveedor)
+            });
+            if (res.ok) {
+                if (modalProv) modalProv.hide();
+                cargarProveedores();
+                cargarOptionsProveedores();
+            } else {
+                alert("No se pudo actualizar el proveedor");
+            }
+        });
+
+        async function eliminarProveedor(id) {
+            if (!confirm(`¿Estás seguro de eliminar el proveedor #${id}?`)) return;
+            const res = await fetch(`${API_URL}/proveedores/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                cargarProveedores();
+                cargarOptionsProveedores();
+            } else alert("Error al eliminar proveedor");
+        }
+
+        function abrirEditarUsuario(id) {
+            const usr = cacheUsuarios.find(u => (u.id_usuario || u.id) == id);
+            if (!usr) return;
+            document.getElementById('editUsrId').value = id;
+            document.getElementById('editUsrNombre').value = usr.nombre || usr.nombre_completo || '';
+            document.getElementById('editUsrEmail').value = usr.email || usr.correo || '';
+            document.getElementById('editUsrPassword').value = '';
+            document.getElementById('editUsrRol').value = (usr.rol || 'usuario').toLowerCase();
+            if (modalUsr) modalUsr.show();
+        }
+
+        document.getElementById('formEditUsuario')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editUsrId').value;
+            const passwordVal = document.getElementById('editUsrPassword').value;
+
+            const usuario = {
+                nombre: document.getElementById('editUsrNombre').value.trim(),
+                email: document.getElementById('editUsrEmail').value.trim(),
+                password: passwordVal || undefined,
+                contrasena: passwordVal || undefined,
+                rol: document.getElementById('editUsrRol').value
+            };
+
+            const res = await fetch(`${API_URL}/usuarios/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
+            });
+            if (res.ok) {
+                if (modalUsr) modalUsr.hide();
+                cargarUsuarios();
+            } else {
+                alert("No se pudo actualizar el usuario");
+            }
+        });
+
+        async function eliminarUsuario(id) {
+            if (!confirm(`¿Estás seguro de eliminar el usuario #${id}?`)) return;
+            const res = await fetch(`${API_URL}/usuarios/${id}`, { method: 'DELETE' });
+            if (res.ok) cargarUsuarios();
+            else alert("Error al eliminar usuario");
+        }
+
+        function abrirEditarCategoria(id) {
+            const cat = cacheCategorias.find(c => (c.id_categoria || c.id) == id);
+            if (!cat) return;
+            document.getElementById('editCatId').value = id;
+            document.getElementById('editCatNombre').value = cat.nombre || '';
+            document.getElementById('editCatDescripcion').value = cat.descripcion || '';
+            if (modalCat) modalCat.show();
+        }
+
+        document.getElementById('formEditCategoria')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editCatId').value;
+            const categoria = {
+                nombre: document.getElementById('editCatNombre').value.trim(),
+                descripcion: document.getElementById('editCatDescripcion').value.trim() || null
+            };
+
+            const res = await fetch(`${API_URL}/categorias/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(categoria)
+            });
+
+            if (res.ok) {
+                if (modalCat) modalCat.hide();
+                cargarTablaCategorias();
+                cargarOptionsCategorias();
+            } else {
+                alert("No se pudo actualizar la categoría");
+            }
+        });
+
+        async function eliminarCategoria(id) {
+            if (!confirm(`¿Estás seguro de eliminar la categoría #${id}?`)) return;
+            const res = await fetch(`${API_URL}/categorias/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                cargarTablaCategorias();
+                cargarOptionsCategorias();
+            } else alert("Error al eliminar categoría");
+        }
+
+        document.getElementById('formProducto')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertContainer = document.getElementById('alertProducto');
+            const nombre = document.getElementById('prodNombre').value.trim();
+            const codigo = document.getElementById('prodCodigo')?.value.trim() || null;
+            const valCategoria = document.getElementById('selectCategoria')?.value;
+            const valProveedor = document.getElementById('selectProveedor')?.value;
+
+            const producto = {
+                nombre_producto: nombre,
+                codigo_barras: codigo,
+                id_categoria: parseInt(valCategoria) || 1,
+                id_proveedor: parseInt(valProveedor) || 1,
+                precio: parseFloat(document.getElementById('prodPrecio').value) || 0.0,
+                stock: parseInt(document.getElementById('prodStock').value) || 0
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/productos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(producto)
+                });
+                if (res.ok) {
+                    if (alertContainer) {
+                        alertContainer.innerHTML = `<div class="alert alert-success alert-dismissible fade show">¡Producto guardado!</div>`;
+                    }
+                    document.getElementById('formProducto').reset();
+                    cargarInventario();
+                    setTimeout(() => { if (alertContainer) alertContainer.innerHTML = ''; }, 3000);
+                }
+            } catch (err) { console.error("Error:", err); }
+        });
+
+        document.getElementById('formProveedor')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertContainer = document.getElementById('alertProveedor');
+            const empresa = document.getElementById('provEmpresa').value.trim();
+
+            const proveedor = {
+                nombre_empresa: empresa,
+                contacto_nombre: document.getElementById('provContacto').value.trim() || null,
+                telefono: document.getElementById('provTelefono').value.trim() || null,
+                email: document.getElementById('provEmail').value.trim() || null,
+                direccion: document.getElementById('provDireccion').value.trim() || null
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/proveedores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(proveedor)
+                });
+                if (res.ok) {
+                    if (alertContainer) {
+                        alertContainer.innerHTML = `<div class="alert alert-success alert-dismissible fade show">¡Proveedor guardado!</div>`;
+                    }
+                    document.getElementById('formProveedor').reset();
+                    cargarProveedores();
+                    cargarOptionsProveedores();
+                    setTimeout(() => { if (alertContainer) alertContainer.innerHTML = ''; }, 3000);
+                }
+            } catch (err) { console.error("Error:", err); }
+        });
+
+        document.getElementById('formUsuario')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertContainer = document.getElementById('alertUsuario');
+            const nombre = document.getElementById('usrNombre').value.trim();
+
+            const usuario = {
+                nombre: nombre,
+                email: document.getElementById('usrEmail').value.trim(),
+                password: document.getElementById('usrPassword').value,
+                contrasena: document.getElementById('usrPassword').value,
+                rol: document.getElementById('usrRol').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/usuarios`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(usuario)
+                });
+                if (res.ok) {
+                    if (alertContainer) {
+                        alertContainer.innerHTML = `<div class="alert alert-success alert-dismissible fade show">¡Usuario registrado!</div>`;
+                    }
+                    document.getElementById('formUsuario').reset();
+                    cargarUsuarios();
+                    setTimeout(() => { if (alertContainer) alertContainer.innerHTML = ''; }, 3000);
+                }
+            } catch (err) { console.error("Error:", err); }
+        });
+
+        document.getElementById('formCategoria')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertContainer = document.getElementById('alertCategoria');
+            const categoria = {
+                nombre: document.getElementById('catNombre').value.trim(),
+                descripcion: document.getElementById('catDescripcion')?.value.trim() || null
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/categorias`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(categoria)
+                });
+                if (res.ok) {
+                    if (alertContainer) {
+                        alertContainer.innerHTML = `<div class="alert alert-success alert-dismissible fade show">¡Categoría guardada!</div>`;
+                    }
+                    document.getElementById('formCategoria').reset();
+                    cargarTablaCategorias();
+                    cargarOptionsCategorias();
+                    setTimeout(() => { if (alertContainer) alertContainer.innerHTML = ''; }, 3000);
+                }
+            } catch (err) { console.error("Error:", err); }
+        });
+
+        function cerrarSesion() {
+            localStorage.clear();
+            window.location.href = '/app/login.html';
+        }
+    </script>
+</body>
+</html>

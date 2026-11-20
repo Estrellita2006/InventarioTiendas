@@ -1,0 +1,456 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Sistema de Inventario</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --azul-principal: #1646a0;
+            --azul-oscuro: #102f69;
+            --azul-claro: #eaf1ff;
+            --blanco: #ffffff;
+            --texto: #263650;
+            --gris: #718096;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(
+                135deg,
+                #102f69 0%,
+                #1646a0 48%,
+                #eaf1ff 48%,
+                #f5f8ff 100%
+            );
+            color: var(--texto);
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 920px;
+            min-height: 500px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--blanco);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 24px 65px rgba(10, 35, 80, 0.22);
+        }
+
+        /* Panel azul decorativo */
+
+        .login-brand {
+            background: linear-gradient(
+                150deg,
+                var(--azul-principal),
+                var(--azul-oscuro)
+            );
+            color: var(--blanco);
+            padding: 55px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-brand::before,
+        .login-brand::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .login-brand::before {
+            width: 280px;
+            height: 280px;
+            right: -120px;
+            top: -100px;
+        }
+
+        .login-brand::after {
+            width: 340px;
+            height: 340px;
+            left: -190px;
+            bottom: -200px;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            margin-bottom: 30px;
+        }
+
+        .brand-title {
+            font-size: 30px;
+            font-weight: 750;
+            line-height: 1.25;
+            margin-bottom: 18px;
+        }
+
+        .brand-description {
+            color: #d9e5ff;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 0;
+        }
+
+        .brand-tag {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 9px 14px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Formulario */
+
+        .login-form-section {
+            padding: 55px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-heading {
+            margin-bottom: 32px;
+        }
+
+        .form-heading h1 {
+            font-size: 27px;
+            font-weight: 750;
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+
+        .form-heading p {
+            color: var(--gris);
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            color: var(--texto);
+            font-size: 13px;
+            font-weight: 650;
+            margin-bottom: 9px;
+        }
+
+        .form-control {
+            min-height: 49px;
+            border: 1px solid #dce4f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 14px;
+            background-color: #fbfcff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--azul-principal);
+            box-shadow: 0 0 0 4px rgba(22, 70, 160, 0.10);
+            background-color: #ffffff;
+        }
+
+        .form-control::placeholder {
+            color: #a1aec1;
+        }
+
+        .login-button {
+            min-height: 49px;
+            background: var(--azul-principal);
+            border: none;
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 650;
+            margin-top: 8px;
+            box-shadow: 0 7px 16px rgba(22, 70, 160, 0.18);
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .login-button:hover {
+            background: var(--azul-oscuro);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        #alert-container {
+            margin-bottom: 0;
+        }
+
+        #alert-container:empty {
+            display: none;
+        }
+
+        #alert-container .alert {
+            font-size: 13px;
+            border-radius: 9px;
+            overflow-wrap: anywhere;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 28px;
+            color: var(--gris);
+            font-size: 12px;
+        }
+
+        /* Adaptación a celulares y tabletas */
+
+        @media (max-width: 700px) {
+            body {
+                background: linear-gradient(
+                    160deg,
+                    var(--azul-oscuro),
+                    var(--azul-principal)
+                );
+            }
+
+            .login-container {
+                padding: 18px;
+            }
+
+            .login-card {
+                max-width: 430px;
+                min-height: auto;
+                grid-template-columns: 1fr;
+                border-radius: 18px;
+            }
+
+            .login-brand {
+                padding: 28px 28px;
+            }
+
+            .brand-icon {
+                width: 54px;
+                height: 54px;
+                border-radius: 15px;
+                font-size: 26px;
+                margin-bottom: 18px;
+            }
+
+            .brand-title {
+                font-size: 23px;
+                margin-bottom: 10px;
+            }
+
+            .brand-description {
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .brand-tag {
+                margin-top: 15px;
+            }
+
+            .login-form-section {
+                padding: 32px 27px;
+            }
+
+            .form-heading {
+                margin-bottom: 25px;
+            }
+
+            .form-heading h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="login-container">
+        <div class="login-card">
+
+            <!-- Panel visual -->
+            <section class="login-brand">
+                <div class="brand-content">
+
+                    <div class="brand-icon" aria-hidden="true">
+                        &#128274;
+                    </div>
+
+                    <h2 class="brand-title">
+                        Sistema de<br>Inventario
+                    </h2>
+
+                    <p class="brand-description">
+                        Administra tus productos y operaciones
+                        desde una plataforma centralizada,
+                        práctica y fácil de utilizar.
+                    </p>
+
+                    <div class="brand-tag">
+                        CONTROL · ORGANIZACIÓN · EFICIENCIA
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Formulario original de inicio de sesión -->
+            <section class="login-form-section">
+
+                <div class="form-heading">
+                    <h1>Bienvenido</h1>
+                    <p>Ingresa tus datos para acceder al sistema.</p>
+                </div>
+
+                <div id="alert-container"></div>
+
+                <form id="loginForm">
+
+                    <div class="mb-4">
+                        <label for="email" class="form-label">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            placeholder="ejemplo@correo.com"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            Contraseña
+                        </label>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            placeholder="Ingresa tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary login-button w-100"
+                    >
+                        Ingresar
+                    </button>
+
+                </form>
+
+                <div class="login-footer">
+                    Sistema de Inventario · Acceso seguro
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Se conserva la lógica original de autenticación -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // FastAPI OAuth2PasswordRequestForm requiere FormData
+            // application/x-www-form-urlencoded
+            const formData = new URLSearchParams();
+            formData.append('username', email);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Error al iniciar sesión');
+                }
+
+                // Guardar token y datos del usuario
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+                // Obtener y limpiar el rol del usuario
+                const rawRol = (data.usuario && (data.usuario.rol || data.usuario.rol_usuario)) || '';
+                const rol = rawRol.toString().trim().toLowerCase();
+
+                // Mantener las redirecciones según el rol
+                if (rol === 'usuario' || rol === 'vendedor') {
+                    window.location.href = '/app/vendedor.html';
+                } else if (rol === 'editor' || rol === 'almacenista' || rol.includes('almacen')) {
+                    window.location.href = '/app/almacen.html';
+                } else if (rol === 'admin' || rol === 'administrador') {
+                    window.location.href = '/app/index.html';
+                } else {
+                    window.location.href = '/app/index.html';
+                }
+
+            } catch (err) {
+                document.getElementById('alert-container').innerHTML = `
+                    <div class="alert alert-danger" role="alert">${err.message}</div>
+                `;
+            }
+        });
+    </script>
+
+</body>
+</html>
+```

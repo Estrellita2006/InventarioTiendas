@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Almacén - Entradas y Ajustes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #0d9488;
+            --primary-hover: #0f766e;
+            --bg-main: #fff9db;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --warning-light: #fffbeb; /* Fondo amarillo claro corporativo */
+            --warning-border: #fef3c7;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL (SIDEBAR) MODERNA */
+        .sidebar {
+            width: var(--sidebar-width);
+             background-color: var(--sidebar-bg);
+            border-right: 2px solid #d4b85c;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        .sidebar-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ENCABEZADO SUPERIOR */
+        .navbar-custom {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        /* TARJETAS */
+        .card-custom {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--card-bg);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-custom:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+        }
+
+        /* CONTENEDOR AMARILLO CLARO */
+        .box-warning-light {
+            background-color: var(--warning-light);
+            border: 1px solid var(--warning-border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        /* FORMULARIOS */
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+        }
+
+        /* BOTONES */
+        .btn-primary-custom {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 10px;
+            color: white;
+            transition: background 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            color: white;
+        }
+
+        /* TABLAS */
+        .table-custom th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-custom td {
+            padding: 12px;
+            vertical-align: middle;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            body {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA LATERAL (SIDEBAR) MODERNA -->
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            📦 <span>Módulo Almacén</span>
+        </div>
+        
+        <div class="sidebar-menu">
+            <span class="text-muted small fw-bold px-2 mb-1">NAVEGACIÓN</span>
+            <!-- Bloque con el fondo amarillo claro solicitado -->
+            <div class="box-warning-light mb-2 text-center">
+                <span class="badge bg-warning text-dark fw-bold d-block py-1 mb-1">Rol: Almacenista</span>
+                <small class="text-muted d-block" style="font-size: 0.75rem;">Control de stock y entradas</small>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn btn-outline-danger w-100 fw-semibold" onclick="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-content">
+
+        <!-- Encabezado del Almacenista -->
+        <div class="navbar-custom">
+            <div>
+                <h4 class="m-0 fw-bold text-dark fs-5">Recepción de Mercancía & Ajuste de Stock</h4>
+                <small class="text-muted">Gestión general de entradas y stock crítico</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small d-none d-md-inline">Sistema Activo</span>
+            </div>
+        </div>
+
+        <div class="container-fluid py-4 px-4">
+            <div class="row g-4">
+                
+                <!-- COLUMNA IZQUIERDA: FORMULARIO REGISTRAR OPERACIÓN -->
+                <div class="col-lg-4">
+                    <div class="card card-custom p-4">
+                        <h5 class="fw-bold mb-3 text-dark">📥 Registrar Movimiento</h5>
+                        <div id="alertAlmacen"></div>
+                        <form id="formAlmacen">
+                            <div class="mb-3">
+                                <label class="form-label">Producto</label>
+                                <select id="selectProducto" class="form-select" required>
+                                    <option value="">Cargando productos...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tipo de Operación</label>
+                                <select id="tipoOperacion" class="form-select" required>
+                                    <option value="ENTRADA">📥 ENTRADA (Compra / Reposición)</option>
+                                    <option value="AJUSTE">🔧 AJUSTE (Conteo físico real)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" id="cantOperacion" class="form-control" placeholder="Ej. 50" min="1" required>
+                                <div class="form-text text-muted small">En Entrada suma al stock. En Ajuste reemplaza el total real.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Motivo / Proveedor / Observación</label>
+                                <input type="text" id="motivoOperacion" class="form-control" placeholder="Ej. Factura #4020 Proveedor X">
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom w-100">Registrar Operación</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: TABLA DE STOCK BAJO + TABLA DE HISTORIAL -->
+                <div class="col-lg-8">
+                    
+                    <!-- 1. TABLA: ALERTAS DE STOCK BAJO -->
+                    <div class="card card-custom p-4 mb-4 border-start border-4 border-danger">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold m-0 text-danger d-flex align-items-center gap-2 fs-6">
+                                ⚠️ Productos con Stock Bajo / Crítico
+                            </h5>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="cargarStockBajo()">🔄 Actualizar Alertas</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>PRODUCTO</th>
+                                        <th>STOCK ACTUAL</th>
+                                        <th>STOCK MÍNIMO</th>
+                                        <th>ESTADO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaAlertasStock">
+                                    <tr><td colspan="5" class="text-center text-muted py-3">Cargando alertas de inventario...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. TABLA: HISTORIAL DE ENTRADAS Y AJUSTES -->
+                    <div class="card card-custom p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold m-0 text-dark fs-6">📋 Historial de Recepciones & Ajustes</h5>
+                            <button class="btn btn-outline-success btn-sm rounded-pill px-3" onclick="cargarMovimientosAlmacen()">🔄 Actualizar Historial</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>FECHA / HORA</th>
+                                        <th>PRODUCTO</th>
+                                        <th>TIPO</th>
+                                        <th>CANTIDAD</th>
+                                        <th>MOTIVO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaAlmacen">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">Cargando movimientos...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+        const usuarioSesion = JSON.parse(localStorage.getItem('usuario') || '{}');
+        const rol = (usuarioSesion.rol || '').toString().trim().toLowerCase();
+
+        if (!usuarioSesion || !usuarioSesion.rol) {
+            window.location.href = '/app/login.html';
+        } else if (rol === 'usuario' || rol === 'vendedor') {
+            window.location.href = '/app/vendedor.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarProductos();
+            cargarAlertasStock();
+            cargarMovimientosAlmacen();
+        });
+
+        async function cargarProductos() {
+            const select = document.getElementById('selectProducto') || document.getElementById('producto_id') || document.querySelector('select');
+            if (!select) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_URL}/inventario`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await res.json();
+                const productos = Array.isArray(data) ? data : (data.productos || []);
+
+                select.innerHTML = '<option value="" selected disabled>Seleccione un producto</option>';
+
+                productos.forEach(p => {
+                    const id = p.id_producto || p.id;
+                    const nombre = p.nombre_producto || p.nombre;
+                    const stock = p.stock_actual ?? p.stock ?? 0;
+                    
+                    select.innerHTML += `<option value="${id}">${nombre} (Stock: ${stock})</option>`;
+                });
+
+            } catch (err) {
+                console.error("Error al obtener productos:", err);
+                select.innerHTML = '<option value="">Error al cargar productos</option>';
+            }
+        }
+
+        async function cargarAlertasStock() {
+            const tbody = document.getElementById('tablaAlertasStock');
+            try {
+                const res = await fetch(`${API_URL}/inventario`);
+                const data = await res.json();
+                const productos = Array.isArray(data) ? data : (data.productos || []);
+                
+                const bajoStock = productos.filter(p => (parseInt(p.stock_actual ?? p.stock ?? 0)) <= 10);
+                tbody.innerHTML = '';
+
+                if (bajoStock.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-success py-4">✅ Todo el inventario tiene stock suficiente.</td></tr>';
+                    return;
+                }
+
+                bajoStock.forEach(prod => {
+                    const id = prod.id_producto || prod.id || '-';
+                    const codigo = prod.codigo_barras || prod.codigo || 'S/C';
+                    const nombre = prod.nombre_producto || prod.nombre || 'Sin nombre';
+                    const precio = parseFloat(prod.precio_venta ?? prod.precio ?? 0).toFixed(2);
+                    const stock = parseInt(prod.stock_actual ?? prod.stock ?? 0);
+
+                    const badge = stock === 0 
+                        ? '<span class="badge bg-danger">Agotado</span>' 
+                        : '<span class="badge bg-warning text-dark">Stock Crítico</span>';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${id}</td>
+                            <td><code>${codigo}</code></td>
+                            <td class="fw-semibold text-dark">${nombre}</td>
+                            <td class="fw-bold text-success">$${precio}</td>
+                            <td class="fw-bold text-danger">${stock} uds</td>
+                            <td>${badge}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Error al cargar alertas.</td></tr>';
+            }
+        }
+
+        async function cargarMovimientosAlmacen() {
+            const tbody = document.getElementById('tablaAlmacen');
+            try {
+                const res = await fetch(`${API_URL}/almacen/mis-movimientos`);
+                const lista = await res.json();
+                tbody.innerHTML = '';
+
+                if (!Array.isArray(lista) || lista.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No hay entradas ni ajustes registrados.</td></tr>';
+                    return;
+                }
+
+                lista.forEach(m => {
+                    const fecha = m.fecha_movimiento ? new Date(m.fecha_movimiento).toLocaleString() : 'N/A';
+                    const tipo = (m.tipo_movimiento || 'ENTRADA').toUpperCase();
+                    
+                    const badgeTipo = tipo === 'ENTRADA' 
+                        ? '<span class="badge bg-success-subtle text-success border border-success px-2 py-1">📥 ENTRADA</span>'
+                        : '<span class="badge bg-warning-subtle text-dark border border-warning px-2 py-1">🔧 AJUSTE</span>';
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="fw-bold text-muted">#${m.id_movimiento}</td>
+                            <td><small>${fecha}</small></td>
+                            <td class="fw-semibold text-dark">${m.nombre_producto || 'Producto #' + m.id_producto}</td>
+                            <td>${badgeTipo}</td>
+                            <td class="fw-bold">${m.cantidad} uds</td>
+                            <td class="text-muted"><small>${m.motivo || 'Sin especificación'}</small></td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Error al cargar historial.</td></tr>';
+            }
+        }
+
+        document.getElementById('formAlmacen')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertContainer = document.getElementById('alertAlmacen');
+            
+            const payload = {
+                id_producto: parseInt(document.getElementById('selectProducto').value),
+                tipo: document.getElementById('tipoOperacion').value,
+                cantidad: parseInt(document.getElementById('cantOperacion').value),
+                motivo: document.getElementById('motivoOperacion').value.trim() || "Operación de almacén"
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/movimientos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alertContainer.innerHTML = `<div class="alert alert-success alert-dismissible fade show">¡Operación registrada con éxito!</div>`;
+                    document.getElementById('formAlmacen').reset();
+                    cargarMovimientosAlmacen();
+                    cargarStockBajo();
+                    cargarProductos();
+                    setTimeout(() => alertContainer.innerHTML = '', 3000);
+                } else {
+                    const errorData = await res.json();
+                    alertContainer.innerHTML = `<div class="alert alert-danger alert-dismissible fade show">${errorData.detail || 'Error al procesar la operación'}</div>`;
+                }
+            } catch (err) {
+                alertContainer.innerHTML = `<div class="alert alert-danger alert-dismissible fade show">Error de conexión con el servidor</div>`;
+            }
+        });
+
+        function cerrarSesion() {
+            localStorage.clear();
+            window.location.href = '/app/login.html';
+        }
+    </script>
+</body>
+</html>
